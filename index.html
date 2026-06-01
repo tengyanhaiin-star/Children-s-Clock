@@ -68,17 +68,16 @@
     width: 100%;
     height: 100vh;
     height: 100dvh;
-    padding: 12px;
+    padding: 12px 12px max(12px, env(safe-area-inset-bottom, 12px)) 12px;
     gap: clamp(8px, 1.5vh, 20px);
   }
 
   .clock-wrap {
-    /* Fallback fixed size, then responsive with min() */
-    width:  320px;
-    height: 320px;
-    width:  min(calc(100vw - 24px), calc(100dvh - 90px));
-    height: min(calc(100vw - 24px), calc(100dvh - 90px));
-    flex-shrink: 0;
+    /* Let flex shrink naturally; cap at the smaller of viewport width or remaining height */
+    flex: 0 1 min(calc(100vw - 24px), calc(100dvh - 110px));
+    width:  min(calc(100vw - 24px), calc(100dvh - 110px));
+    min-width: 0;
+    aspect-ratio: 1 / 1;
     filter: drop-shadow(0 10px 36px rgba(200,140,160,0.35));
     animation: clockFloat 4s ease-in-out infinite;
   }
@@ -86,7 +85,7 @@
     0%,100% { transform: translateY(0) rotate(-0.5deg); }
     50%     { transform: translateY(-8px) rotate(0.5deg); }
   }
-  svg { width: 100%; height: 100%; display: block; }
+  svg { width: 100%; height: 100%; display: block; overflow: visible; }
 
   .digital {
     font-family: 'DM Mono', monospace;
@@ -103,7 +102,7 @@
     flex-shrink: 0;
   }
   .date-label {
-    font-size: clamp(0.65rem, 1.8vw, 0.95rem);
+    font-size: clamp(0.9rem, 2.2vw, 1.5rem);
     font-weight: 700; color: #c48080;
     letter-spacing: 0.04em; opacity: 0.85;
     flex-shrink: 0;
