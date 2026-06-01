@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>International Children's Day Clock</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;800&family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Alata&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 100vw;
+    /* Fallback for older iOS, then use dvh (dynamic viewport, excludes browser chrome) */
+    height: 100vh;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #fff8e8 0%, #ffe8f0 50%, #e8f4ff 100%);
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+    /* Safe area for notch / Dynamic Island / home bar */
+    padding-top:    env(safe-area-inset-top,    0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left:   env(safe-area-inset-left,   0px);
+    padding-right:  env(safe-area-inset-right,  0px);
+  }
+
+  /* inset: 0 expanded for iOS 14 and below */
+  .bg-shapes {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    pointer-events: none; z-index: 0;
+  }
+  .bg-shape {
+    position: absolute; border-radius: 50%; opacity: 0.13;
+    animation: floaty 6s ease-in-out infinite;
+  }
+  @keyframes floaty {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-20px) rotate(8deg); }
+  }
+
+  .star-field {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    pointer-events: none; z-index: 0;
+  }
+  .star {
+    position: absolute; width: 8px; height: 8px; opacity: 0;
+    animation: twinkle var(--dur,3s) ease-in-out infinite var(--delay,0s);
+  }
+  .star::before,.star::after {
+    content:''; position:absolute; background:var(--col,#ffd43b); border-radius:2px;
+  }
+  .star::before { width:8px; height:2px; top:3px; left:0; }
+  .star::after  { width:2px; height:8px; top:0;   left:3px; }
+  @keyframes twinkle {
+    0%,100% { opacity:0; transform:scale(0.5) rotate(0deg); }
+    50%     { opacity:0.75; transform:scale(1.2) rotate(20deg); }
+  }
+
+  .scene {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    padding: 12px;
+    gap: clamp(8px, 1.5vh, 20px);
+  }
+
+  .clock-wrap {
+    /* Fallback fixed size, then responsive with min() */
+    width:  320px;
+    height: 320px;
+    width:  min(calc(100vw - 24px), calc(100dvh - 90px));
+    height: min(calc(100vw - 24px), calc(100dvh - 90px));
+    flex-shrink: 0;
+    filter: drop-shadow(0 10px 36px rgba(200,140,160,0.35));
+    animation: clockFloat 4s ease-in-out infinite;
+  }
+  @keyframes clockFloat {
+    0%,100% { transform: translateY(0) rotate(-0.5deg); }
+    50%     { transform: translateY(-8px) rotate(0.5deg); }
+  }
+  svg { width: 100%; height: 100%; display: block; }
+
+  .digital {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(0.9rem, 2.2vw, 1.5rem);
+    font-weight: 700; color: #8b5e7a;
+    letter-spacing: 0.12em;
+    background: rgba(255,255,255,0.7);
+    padding: clamp(4px,0.8vh,9px) clamp(12px,2.5vw,28px);
+    border-radius: 50px;
+    box-shadow: 0 4px 18px rgba(200,140,160,0.18), inset 0 1px 0 rgba(255,255,255,0.9);
+    /* webkit prefix required for iOS Safari */
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    flex-shrink: 0;
+  }
+  .date-label {
+    font-size: clamp(0.65rem, 1.8vw, 0.95rem);
+    font-weight: 700; color: #c48080;
+    letter-spacing: 0.04em; opacity: 0.85;
+    flex-shrink: 0;
+    max-width: 100%;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .confetti-wrap {
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    pointer-events: none; z-index: 99;
+  }
+  .conf {
+    position:absolute; border-radius:2px; opacity:0;
+    animation: confFall 1.8s ease-in forwards;
+  }
+  @keyframes confFall {
+    0%   { opacity:1; transform:translateY(-30px) rotate(0deg); }
+    100% { opacity:0; transform:translateY(320px) rotate(720deg); }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-shapes" id="bgShapes"></div>
+<div class="star-field"  id="starField"></div>
+<div class="confetti-wrap" id="confettiWrap"></div>
+
+<div class="scene">
+  <div class="clock-wrap">
+    <svg viewBox="0 0 380 380" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="faceGrad" cx="42%" cy="38%" r="60%">
+          <stop offset="0%"   stop-color="#fffef5"/>
+          <stop offset="100%" stop-color="#fff6dc"/>
+        </radialGradient>
+        <filter id="hShadow">
+          <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000025"/>
+        </filter>
+      </defs>
+
+      <!-- glow -->
+      <circle cx="190" cy="194" r="168" fill="#e8b0c0" opacity="0.22"/>
+      <!-- bear ears -->
+      <circle cx="60"  cy="78" r="38" fill="#ff7878"/>
+      <circle cx="60"  cy="78" r="23" fill="#ffbebe"/>
+      <circle cx="320" cy="78" r="38" fill="#ff7878"/>
+      <circle cx="320" cy="78" r="23" fill="#ffbebe"/>
+      <!-- rings -->
+      <circle cx="190" cy="190" r="162" fill="#ff7878"/>
+      <circle cx="190" cy="190" r="148" fill="#ffffff"/>
+      <circle cx="190" cy="190" r="140" fill="#64c8ff"/>
+      <circle cx="190" cy="190" r="130" fill="#ffd43b"/>
+      <circle cx="190" cy="190" r="122" fill="url(#faceGrad)"/>
+
+      <g id="rainbowDots"></g>
+      <g id="yellowDots"></g>
+      <g id="minTicks" stroke-linecap="round"></g>
+      <g id="decoDots"></g>
+      <g id="hourNums" font-family="'Alata',sans-serif" font-weight="400"
+         text-anchor="middle"></g>
+      <g id="starAccents"></g>
+
+      <!-- hands — rotated purely via SVG transform attribute rotate(deg,cx,cy) -->
+      <g filter="url(#hShadow)">
+        <line id="hand-hour"   x1="190" y1="210" x2="190" y2="120"
+              stroke="#ff9820" stroke-width="9"  stroke-linecap="round"/>
+        <line id="hand-minute" x1="190" y1="215" x2="190" y2="100"
+              stroke="#5a3a8a" stroke-width="7"  stroke-linecap="round"/>
+        <line id="hand-second" x1="190" y1="220" x2="190" y2="80"
+              stroke="#ff5555" stroke-width="3.5" stroke-linecap="round"/>
+      </g>
+
+      <!-- center caps -->
+      <circle cx="190" cy="190" r="13" fill="#5a3a8a"/>
+      <circle cx="190" cy="190" r="8"  fill="#ffffff"/>
+      <circle cx="190" cy="190" r="5"  fill="#ff7878"/>
+    </svg>
+  </div>
+
+  <div class="digital"   id="digitalTime">00:00:00</div>
+  <div class="date-label" id="dateLabel"></div>
+</div>
+
+<script>
+const CX=190, CY=190;
+const NS='http://www.w3.org/2000/svg';
+const HOUR_COLORS=['#ff5050','#ffb520','#3cc85a','#50aaff','#c040ff','#ff7020',
+                   '#ff5050','#ffb520','#3cc85a','#50aaff','#c040ff','#ff7020'];
+const DECO_COLORS=['#ffd43b','#ff9898','#78d0ff','#a8f0a0'];
+const RAINBOW    =['#ff5050','#ff9820','#ffd43b','#50cc60','#50aaff','#bb50ff'];
+
+function polar(r, deg) {
+  const a=(deg-90)*Math.PI/180;
+  return {x: CX+r*Math.cos(a), y: CY+r*Math.sin(a)};
+}
+function el(tag, attrs) {
+  const e=document.createElementNS(NS,tag);
+  for(const [k,v] of Object.entries(attrs)) e.setAttribute(k,v);
+  return e;
+}
+function star5(cx,cy,r) {
+  let d='';
+  for(let i=0;i<10;i++){
+    const a=(i*36-90)*Math.PI/180, rad=i%2?r*0.42:r;
+    d+=(i?'L':'M')+(cx+rad*Math.cos(a))+' '+(cy+rad*Math.sin(a))+' ';
+  }
+  return d+'Z';
+}
+
+// static decorations
+
+// 1. Rainbow dots: coral ring is r=162, white ring r=148, midpoint = 155
+const rdG=document.getElementById('rainbowDots');
+for(let i=0;i<60;i++){const p=polar(155,i*6);rdG.appendChild(el('circle',{cx:p.x,cy:p.y,r:3.5,fill:RAINBOW[i%6],opacity:'0.88'}));}
+
+const ydG=document.getElementById('yellowDots');
+for(let i=0;i<30;i++){const p=polar(133,i*12);ydG.appendChild(el('circle',{cx:p.x,cy:p.y,r:2.8,fill:'rgba(255,255,255,0.7)'}));}
+
+// 2. All ticks same length: outer r=120, inner r=115 for every tick
+const mtG=document.getElementById('minTicks');
+for(let m=0;m<60;m++){
+  const isH=m%5===0,isQ=m%15===0;
+  const p1=polar(120,m*6),p2=polar(115,m*6);
+  mtG.appendChild(el('line',{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,
+    stroke:isQ?'#ff7878':isH?'#b8a090':'#ccc0b0','stroke-width':isQ?3.5:isH?2:1.5}));
+}
+
+const ddG=document.getElementById('decoDots');
+for(let h=0;h<12;h++){
+  const p=polar(108,h*30+15);
+  ddG.appendChild(el('circle',{cx:p.x,cy:p.y,r:5.5,fill:DECO_COLORS[h%4],opacity:'0.75'}));
+  ddG.appendChild(el('circle',{cx:p.x,cy:p.y,r:2.8,fill:'white',opacity:'0.85'}));
+}
+
+// 3. Numbers: font-size doubled (44), moved inward to r=80 to fit
+const hnG=document.getElementById('hourNums');
+for(let h=1;h<=12;h++){
+  const p=polar(92,h*30);
+  // Use dy="0.35em" instead of dominant-baseline for consistent vertical centering on iOS Safari
+  const ts=el('text',{x:p.x+2,y:p.y+2,'font-size':'44',fill:'rgba(0,0,0,0.08)',dy:'0.35em'});ts.textContent=h;
+  const t =el('text',{x:p.x,  y:p.y,  'font-size':'44',fill:HOUR_COLORS[h-1],  dy:'0.35em'});t.textContent=h;
+  hnG.appendChild(ts);hnG.appendChild(t);
+}
+
+// 4. Four corner stars:
+//    Top-left / top-right: inside the bear ears at (60,78) and (320,78)
+//    Bottom-left / bottom-right: symmetric positions at (60,302) and (320,302)
+const saG=document.getElementById('starAccents');
+[
+  [55,  73,  13, '#ffd43b'],   // top-left ear — gold
+  [325, 73,  13, '#64c8ff'],   // top-right ear — sky blue
+  [55,  307, 13, '#ff7878'],   // bottom-left — pink
+  [325, 307, 13, '#2ecc71'],   // bottom-right — vivid green
+].forEach(([x,y,r,col])=>{
+  saG.appendChild(el('path',{d:star5(x,y,r),fill:col,opacity:'0.95'}));
+});
+
+// background blobs
+const blobCols=['#ff9898','#ffd43b','#78d0ff','#a8f8a0','#d0a8ff','#ffc088'];
+const bgDiv=document.getElementById('bgShapes');
+[[80,80,180,'0s'],[720,120,140,'1s'],[200,680,200,'2s'],
+ [680,600,160,'1.5s'],[440,820,220,'0.8s'],[920,440,170,'2.2s']].forEach(([x,y,sz,delay],i)=>{
+  const d=document.createElement('div');d.className='bg-shape';
+  Object.assign(d.style,{left:x+'px',top:y+'px',width:sz+'px',height:sz+'px',
+    background:blobCols[i%6],animationDelay:delay,animationDuration:(5+i*0.7)+'s'});
+  bgDiv.appendChild(d);
+});
+
+// star field
+const sfDiv=document.getElementById('starField');
+['#ffd43b','#ff9898','#78d0ff','#a8f8a0'].forEach((col,i)=>{
+  for(let j=0;j<10;j++){
+    const s=document.createElement('div');s.className='star';
+    s.style.setProperty('--col',col);
+    s.style.setProperty('--dur',(2+Math.random()*3)+'s');
+    s.style.setProperty('--delay',(Math.random()*4)+'s');
+    s.style.left=Math.random()*100+'vw';s.style.top=Math.random()*100+'vh';
+    sfDiv.appendChild(s);
+  }
+});
+
+// confetti
+function spawnConfetti(){
+  const wrap=document.getElementById('confettiWrap');
+  for(let i=0;i<30;i++){
+    const c=document.createElement('div');c.className='conf';
+    c.style.background=blobCols[i%6];
+    c.style.left=(20+Math.random()*60)+'vw';
+    c.style.top=(5+Math.random()*20)+'vh';
+    c.style.animationDelay=(Math.random()*0.6)+'s';
+    c.style.width=(6+Math.random()*8)+'px';
+    c.style.height=(6+Math.random()*8)+'px';
+    wrap.appendChild(c);
+    setTimeout(()=>c.remove(),2400);
+  }
+}
+
+// date
+const WEEKDAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS=['January','February','March','April','May','June',
+              'July','August','September','October','November','December'];
+function updateDate(now){
+  document.getElementById('dateLabel').textContent=
+    `${WEEKDAYS[now.getDay()]}, ${MONTHS[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+}
+
+// ── hands: use SVG rotate(angle, cx, cy) — no CSS transform at all ────────────
+const hHour  =document.getElementById('hand-hour');
+const hMinute=document.getElementById('hand-minute');
+const hSecond=document.getElementById('hand-second');
+const digitalEl=document.getElementById('digitalTime');
+const pad=n=>String(n).padStart(2,'0');
+
+let prevMin=-1;
+
+function frame(){
+  const now=new Date();
+  const h=now.getHours(), m=now.getMinutes(), s=now.getSeconds(), ms=now.getMilliseconds();
+
+  // degrees, fully continuous with millisecond precision
+  const sDeg=(s + ms/1000)*6;
+  const mDeg=(m + (s+ms/1000)/60)*6;
+  const hDeg=((h%12) + m/60 + s/3600)*30;
+
+  // SVG rotate(angle, pivot-x, pivot-y) — works correctly regardless of CSS
+  hSecond.setAttribute('transform',`rotate(${sDeg},${CX},${CY})`);
+  hMinute.setAttribute('transform',`rotate(${mDeg},${CX},${CY})`);
+  hHour  .setAttribute('transform',`rotate(${hDeg},${CX},${CY})`);
+
+  digitalEl.textContent=`${pad(h)}:${pad(m)}:${pad(s)}`;
+
+  if(m!==prevMin){
+    updateDate(now);
+    if(prevMin!==-1) spawnConfetti();
+    prevMin=m;
+  }
+
+  requestAnimationFrame(frame);
+}
+
+updateDate(new Date());
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
