@@ -2,13 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Children's Clock</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;800&family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Alata&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html {
+    /* Prevent iOS double-tap zoom */
+    touch-action: manipulation;
+  }
+
   body {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
     width: 100vw;
     /* Fallback for older iOS, then use dvh (dynamic viewport, excludes browser chrome) */
     height: 100vh;
@@ -256,10 +264,10 @@ for(let h=1;h<=12;h++){
 //    Bottom-left / bottom-right: symmetric positions at (60,302) and (320,302)
 const saG=document.getElementById('starAccents');
 [
-  [55,  73,  13, '#ffd43b'],   // top-left ear — gold
+  [55,  73,  13, '#2ecc71'],   // top-left ear — vivid green
   [325, 73,  13, '#64c8ff'],   // top-right ear — sky blue
   [55,  307, 13, '#ff7878'],   // bottom-left — pink
-  [325, 307, 13, '#2ecc71'],   // bottom-right — vivid green
+  [325, 307, 13, '#f0a500'],   // bottom-right — deep gold
 ].forEach(([x,y,r,col])=>{
   saG.appendChild(el('path',{d:star5(x,y,r),fill:col,opacity:'0.95'}));
 });
@@ -346,6 +354,19 @@ function frame(){
 
   requestAnimationFrame(frame);
 }
+
+// Disable pinch-zoom on iOS
+document.addEventListener('touchmove', function(e) {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+
+// Disable double-tap zoom on iOS (fallback for older Safari)
+let lastTap = 0;
+document.addEventListener('touchend', function(e) {
+  const now = Date.now();
+  if (now - lastTap < 300) e.preventDefault();
+  lastTap = now;
+}, { passive: false });
 
 updateDate(new Date());
 requestAnimationFrame(frame);
