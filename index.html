@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>International Children's Day Clock</title>
+<title>Children's Clock</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700;800&family=Nunito:wght@400;700;900&family=DM+Mono:wght@400;500&family=Alata&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -223,7 +223,7 @@ const rdG=document.getElementById('rainbowDots');
 for(let i=0;i<60;i++){const p=polar(155,i*6);rdG.appendChild(el('circle',{cx:p.x,cy:p.y,r:3.5,fill:RAINBOW[i%6],opacity:'0.88'}));}
 
 const ydG=document.getElementById('yellowDots');
-for(let i=0;i<30;i++){const p=polar(133,i*12);ydG.appendChild(el('circle',{cx:p.x,cy:p.y,r:2.8,fill:'rgba(255,255,255,0.7)'}));}
+for(let i=0;i<30;i++){const p=polar(135,i*12);ydG.appendChild(el('circle',{cx:p.x,cy:p.y,r:2.8,fill:'rgba(255,255,255,0.7)'}));}
 
 // 2. All ticks same length: outer r=120, inner r=115 for every tick
 const mtG=document.getElementById('minTicks');
@@ -231,7 +231,7 @@ for(let m=0;m<60;m++){
   const isH=m%5===0,isQ=m%15===0;
   const p1=polar(120,m*6),p2=polar(115,m*6);
   mtG.appendChild(el('line',{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,
-    stroke:isQ?'#ff7878':isH?'#b8a090':'#ccc0b0','stroke-width':isQ?3.5:isH?2:1.5}));
+    stroke:isQ?'#ff7878':isH?'#b8a090':'#ccc0b0','stroke-width':isQ?3.5:isH?2.5:1.5}));
 }
 
 const ddG=document.getElementById('decoDots');
