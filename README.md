@@ -2,8 +2,6 @@
 
 A cheerful, animated analog clock built with pure HTML, SVG, and JavaScript — designed to celebrate **International Children's Day (June 1st)**.
 
-![Children's Clock Preview](preview.png)
-
 ## Features
 
 - **Real-time analog clock** — hour, minute, and second hands update continuously with millisecond precision (no tick stuttering on the second hand)
@@ -32,7 +30,6 @@ All fonts are loaded from [Google Fonts](https://fonts.google.com/):
 
 | Font | Usage |
 |------|-------|
-| [Baloo 2](https://fonts.google.com/specimen/Baloo+2) | Digital time display label |
 | [Nunito](https://fonts.google.com/specimen/Nunito) | Date label and body text |
 | [DM Mono](https://fonts.google.com/specimen/DM+Mono) | Digital HH:MM:SS readout |
 | [Alata](https://fonts.google.com/specimen/Alata) | Clock face hour numbers |
@@ -49,12 +46,7 @@ All fonts are loaded from [Google Fonts](https://fonts.google.com/):
 
 ## Usage
 
-Simply download `index.html` and open it in a browser, or host it on any static file host (GitHub Pages, Netlify, Vercel, etc.).
-
-To deploy via GitHub Pages:
-1. Go to your repository **Settings → Pages**
-2. Set source to **Deploy from a branch → main → / (root)**
-3. Your clock will be live at `https://<your-username>.github.io/Children-s-Clock/`
+Simply download `index.html` and open it in a browser.
 
 ## License
 
