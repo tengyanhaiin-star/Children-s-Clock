@@ -7,7 +7,7 @@ A cheerful, animated analog clock built with pure HTML, SVG, and JavaScript — 
 - **Real-time analog clock** — hour, minute, and second hands update continuously with millisecond precision (no tick stuttering on the second hand)
 - **Responsive layout** — the clock face scales to fill any window size, from phone screens to large desktop monitors
 - **Playful design** — bear ears, rainbow dot ring, colorful hour numbers (Alata font), four corner stars, and a floating animation
-- **Digital time display** — shown below the clock face in a monospace font (DM Mono)
+- **Digital time display** — shown below the clock face
 - **Date display** — full weekday, month, day, and year
 - **iPhone / iOS Safari compatible** — uses `100dvh`, `viewport-fit=cover`, `env(safe-area-inset-*)`, `-webkit-backdrop-filter`, and pinch/double-tap zoom disabled
 - **Confetti burst** — a small celebration fires every time the minute changes
@@ -30,8 +30,7 @@ All fonts are loaded from [Google Fonts](https://fonts.google.com/):
 
 | Font | Usage |
 |------|-------|
-| [Nunito](https://fonts.google.com/specimen/Nunito) | Date label and body text |
-| [DM Mono](https://fonts.google.com/specimen/DM+Mono) | Digital HH:MM:SS readout |
+| [Nunito](https://fonts.google.com/specimen/Nunito) | Digital HH:MM:SS readout and Date label |
 | [Alata](https://fonts.google.com/specimen/Alata) | Clock face hour numbers |
 
 ## Browser Compatibility
