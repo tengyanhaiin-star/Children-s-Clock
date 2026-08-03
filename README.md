@@ -15,7 +15,7 @@ A cheerful, animated analog clock built with pure HTML, SVG, and JavaScript — 
 
 ## Demo
 
-Open [Children's Clock](https://tengyanhaiin-star.github.io/Children-s-Clock/) directly in any modern browser. No server required.
+Open [Children's Clock](https://tengyanhaiin-star.github.io/Children-s-Clock/) directly in any modern browser, no server required.
 
 ## Fonts Used
 
@@ -35,10 +35,6 @@ All fonts are loaded from [Google Fonts](https://fonts.google.com/):
 | Safari (desktop) | ✅ Full support |
 | iOS Safari (iPhone) | ✅ Full support |
 | Android Chrome | ✅ Full support |
-
-## Usage
-
-Simply download `index.html` and open it in a browser.
 
 ## License
 
